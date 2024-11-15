@@ -124,7 +124,7 @@ Open backend/.env and configure the database settings as follows:
 
 ```
 DB_CONNECTION=mysql
-DB_HOST=http://127.0.0.1
+DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=laravel_db
 DB_USERNAME=custom_user
