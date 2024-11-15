@@ -1,0 +1,19 @@
+# Ignore Docker container and volume data
+.docker/
+
+# Ignore environment files
+.env
+.env.local
+.env.testing
+
+# Ignore compiled frontend and backend assets
+frontend/dist/
+backend/vendor/
+backend/node_modules/
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore any other files that should not be tracked
+*.log
