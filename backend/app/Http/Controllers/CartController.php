@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\CartItem;
+use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -63,18 +64,30 @@ class CartController extends Controller
             }
         }
 
-        // Reduce stock
+        $order = Order::create([
+            'user_id' => auth()->id(),
+            'total_amount' => $cart->items->sum(function ($item) {
+                return $item->quantity * $item->price - ($item->discount ?? 0);
+            }),
+        ]);
+
         foreach ($cart->items as $item) {
+            $order->items()->create([
+                'product_id' => $item->product_id,
+                'quantity' => $item->quantity,
+                'price' => $item->price,
+                'discount' => $item->discount,
+            ]);
+
             $item->product->decrement('stock_quantity', $item->quantity);
         }
-
-        // Create order logic (to be implemented in Step 6)
 
         $cart->items()->delete();
         $cart->delete();
 
-        return response()->json(['message' => 'Checkout completed successfully']);
+        return response()->json(['message' => 'Checkout completed successfully', 'order' => $order]);
     }
+
 
 
 }

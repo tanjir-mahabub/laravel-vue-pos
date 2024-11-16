@@ -3,13 +3,9 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Laravel\Passport\Http\Controllers\AccessTokenController;
-use Laravel\Passport\Http\Controllers\ApproveAuthorizationController;
-use Laravel\Passport\Http\Controllers\AuthorizationController;
-use Laravel\Passport\Http\Controllers\DenyAuthorizationController;
-use Laravel\Passport\Http\Controllers\TransientTokenController;
+use App\Http\Controllers\SalesReportController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -41,4 +37,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/cart', [CartController::class, 'viewCart']);
     Route::delete('/cart/item/{id}', [CartController::class, 'removeItem']);
     Route::post('/cart/checkout', [CartController::class, 'checkout']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/sales/date-wise', [SalesReportController::class, 'dateWiseReport']);
+    Route::post('/sales/product-wise', [SalesReportController::class, 'productWiseReport']);
+    Route::get('/sales/stock', [SalesReportController::class, 'stockReport']);
 });
