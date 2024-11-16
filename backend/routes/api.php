@@ -20,24 +20,8 @@ use Laravel\Passport\Http\Controllers\TransientTokenController;
 |
  */
 
-// Issue access tokens
-Route::post('oauth/token', [AccessTokenController::class, 'issueToken']);
-
-
-// Authorize requests
-Route::get('/oauth/authorize', [AuthorizationController::class, 'authorize']);
-Route::post('/oauth/approve', [ApproveAuthorizationController::class, 'approve']);
-Route::delete('/oauth/authorize', [DenyAuthorizationController::class, 'deny']);
-
-// Transient token route
-Route::post('/oauth/token/refresh', [TransientTokenController::class, 'refresh']);
-
-// User authentication routes
-Route::post('/login', [AuthController::class, 'login'])->name('login');
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api');
-
-// Protected route
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('register', [AuthController::class, 'register']);
+Route::post('login', [AuthController::class, 'login']);
+Route::middleware('auth:api')->group(function () {
+    Route::post('logout', [AuthController::class, 'logout']);
 });
