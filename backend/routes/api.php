@@ -5,6 +5,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SalesReportController;
+use App\Http\Controllers\OrderController;
 
 
 /*
@@ -44,3 +45,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/sales/product-wise', [SalesReportController::class, 'productWiseReport']);
     Route::get('/sales/stock', [SalesReportController::class, 'stockReport']);
 });
+
+Route::middleware('auth:sanctum')->post('/orders', [OrderController::class, 'store']);
