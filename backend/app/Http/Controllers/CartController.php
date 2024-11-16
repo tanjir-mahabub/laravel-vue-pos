@@ -17,7 +17,8 @@ class CartController extends Controller
             'quantity' => 'required|integer|min:1',
         ]);
 
-        $product = Product::find($validated['product_id']);
+        $product = Product::findOrFail($validated['product_id']);
+
 
         if ($product->stock_quantity < $validated['quantity']) {
             return response()->json(['message' => 'Insufficient stock'], 400);
@@ -53,6 +54,10 @@ class CartController extends Controller
     public function checkout()
     {
         $cart = Cart::with('items.product')->where('user_id', auth()->id())->first();
+
+        if (!$cart) {
+            return response()->json(['message' => 'Cart not found'], 404);
+        }
 
         if (!$cart || $cart->items->isEmpty()) {
             return response()->json(['message' => 'Cart is empty'], 400);

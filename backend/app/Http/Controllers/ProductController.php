@@ -12,7 +12,7 @@ class ProductController extends Controller
         $validatedData = $request->validate([
             'name' => 'required',
             'price' => 'required|numeric',
-            'stock_quantity' => 'required|integer',
+            'quantity' => 'required|integer',
         ]);
 
         Product::create($validatedData);

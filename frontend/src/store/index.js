@@ -5,7 +5,7 @@ export default createStore({
     state: {
         user: null,
         token: localStorage.getItem('auth_token') || null,  // Load token from localStorage
-        cart: [],
+        cart: JSON.parse(localStorage.getItem('cart')) || [],  // Load cart from localStorage
     },
     mutations: {
         setUser(state, user) {
@@ -27,12 +27,15 @@ export default createStore({
             } else {
                 state.cart.push({ ...product, quantity: 1 });
             }
+            localStorage.setItem('cart', JSON.stringify(state.cart));  // Persist cart to localStorage
         },
         removeFromCart(state, productId) {
             state.cart = state.cart.filter(item => item.id !== productId);
+            localStorage.setItem('cart', JSON.stringify(state.cart));  // Persist cart to localStorage
         },
         clearCart(state) {
             state.cart = [];
+            localStorage.setItem('cart', JSON.stringify(state.cart));  // Persist cart to localStorage
         }
     },
     actions: {
@@ -41,8 +44,12 @@ export default createStore({
                 const response = await axios.post('/login', credentials);
                 commit('setToken', response.data.token);
                 commit('setUser', response.data.user);
+                // Optionally, fetch user data if not included in the response
+                // const userResponse = await axios.get('/user');
+                // commit('setUser', userResponse.data);
             } catch (error) {
                 console.error('Login failed', error);
+                // Add error handling, maybe show a message to the user
             }
         },
         logout({ commit }) {
