@@ -1,47 +1,73 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import store from '../store';
-import ProductList from '@/components/ProductList.vue';
-import Cart from '@/components/Cart.vue';
+
+// import Home from '@/views/Home.vue';
 import Login from '@/components/Login.vue';
 import Register from '@/components/Register.vue';
+import Dashboard from '@/components/Dashboard.vue';
+import ProductList from '@/components/ProductList.vue';
+import SalesReport from '@/components/SalesReport.vue';
+import StockReport from '@/components/StockReport.vue';
+import App from '@/App.vue';
+import ReportFilters from '@/components/ReportFilters.vue';
 
 const routes = [
+  { path: '/', name: 'Home', component: App },
+  { path: '/login', name: 'Login', component: Login },
+  { path: '/register', name: 'Register', component: Register },
   {
-    path: '/products',
-    name: 'products',
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: Dashboard,
+    meta: { requiresAuth: true, roles: ['admin', 'staff'] }
+  },
+  {
+    path: '/product-list',
+    name: 'ProductList',
     component: ProductList,
+    meta: { requiresAuth: true, roles: ['admin'] }
   },
   {
-    path: '/cart',
-    name: 'cart',
-    component: Cart,
-    beforeEnter: (to, from, next) => {
-      if (!store.getters.isAuthenticated) {
-        next('/login');
-      } else {
-        next();
-      }
-    },
+    path: '/sales-report',
+    name: 'SalesReport',
+    component: SalesReport,
+    meta: { requiresAuth: true, roles: ['admin', 'staff'] }
   },
   {
-    path: '/login',
-    name: 'login',
-    component: Login,
+    path: '/stock-report',
+    name: 'StockReport',
+    component: StockReport,
+    meta: { requiresAuth: true, roles: ['admin'] }
   },
   {
-    path: '/register',
-    name: 'register',
-    component: Register,
-  },
-  {
-    path: '/',
-    redirect: '/products',
+    path: '/report-filter',
+    name: 'ReportFilter',
+    component: ReportFilters,
+    meta: { requiresAuth: true, roles: ['admin', 'staff'] }
   },
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes,
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes
+});
+
+// Global route guard to protect routes
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = store.getters.isAuthenticated;
+  const userRole = store.getters.userRole;
+
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!isAuthenticated) {
+      next('/login');
+    } else if (to.matched.some(record => record.meta.roles && !record.meta.roles.includes(userRole))) {
+      next('/'); // Redirect to home if user does not have the required role
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
 });
 
 export default router;

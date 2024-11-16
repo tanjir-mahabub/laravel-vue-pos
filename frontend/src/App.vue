@@ -7,15 +7,22 @@ import { RouterLink, RouterView } from 'vue-router'
     <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
 
     <div class="wrapper">
-     <h1>Hello World</h1>
+      <h1>Welcome to the Admin Panel</h1>
 
       <nav>
         <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
+        <RouterLink to="/login">Login</RouterLink>
+        <RouterLink to="/register">Register</RouterLink>
+        <RouterLink to="/dashboard">Dashboard</RouterLink>
+        <RouterLink to="/product-list">Product List</RouterLink>
+        <RouterLink to="/sales-report">Sales Report</RouterLink>
+        <RouterLink to="/stock-report">Stock Report</RouterLink>
+        <RouterLink to="/report-filter">Report Filter</RouterLink>
       </nav>
     </div>
   </header>
-Test
+
+  <!-- Main view area for components -->
   <RouterView />
 </template>
 
@@ -76,7 +83,6 @@ nav a:first-of-type {
     text-align: left;
     margin-left: -1rem;
     font-size: 1rem;
-
     padding: 1rem 0;
     margin-top: 1rem;
   }

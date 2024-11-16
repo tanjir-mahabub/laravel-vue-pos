@@ -1,49 +1,32 @@
 <template>
-  <div class="login-form">
-    <h2>Login</h2>
-    <form @submit.prevent="login">
-      <div>
-        <label for="email">Email</label>
-        <input v-model="email" type="email" id="email" required />
-      </div>
-      <div>
-        <label for="password">Password</label>
-        <input v-model="password" type="password" id="password" required />
-      </div>
-      <button type="submit">Login</button>
-    </form>
-    <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
-  </div>
+  <form @submit.prevent="loginUser">
+    <input v-model="email" placeholder="Email" />
+    <input v-model="password" type="password" placeholder="Password" />
+    <button type="submit">Login</button>
+  </form>
 </template>
 
 <script>
 export default {
   data() {
-    return {
-      email: '',
-      password: '',
-      errorMessage: '',
-    };
+    return { email: '', password: '' };
   },
   methods: {
-    async login() {
+    async loginUser() {
       try {
-        await this.$store.dispatch('login', {
-          email: this.email,
-          password: this.password,
-        });
-        this.$router.push('/products');  // Redirect to product page after login
+        // Dispatch the login action and pass credentials
+        await this.$store.dispatch('login', { email: this.email, password: this.password });
+        
+        // After login, check if token is stored
+        const token = localStorage.getItem('authToken');
+        console.log('Stored token:', token);  // Make sure the token is being stored
+
+        // Redirect to dashboard or homepage
+        this.$router.push('/');
       } catch (error) {
-        this.errorMessage = 'Login failed. Please check your credentials.';
+        alert('Login failed: ' + error.message);
       }
     },
   },
 };
 </script>
-
-<style scoped>
-/* Add styling for login form */
-.error-message {
-  color: red;
-}
-</style>

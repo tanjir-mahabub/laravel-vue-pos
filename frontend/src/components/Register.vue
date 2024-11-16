@@ -33,11 +33,12 @@ export default {
   methods: {
     async register() {
       try {
-        const response = await this.$axios.post('http://localhost/api/register', {
+        const response = await this.$axios.post('/register', {
           name: this.name,
           email: this.email,
           password: this.password,
         });
+        this.$store.commit('SET_TOKEN', response.data.token); // Store the token in Vuex
         this.$router.push('/login');  // Redirect to login page after successful registration
       } catch (error) {
         this.errorMessage = 'Registration failed. Please try again.';
@@ -46,10 +47,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-/* Add styling for register form */
-.error-message {
-  color: red;
-}
-</style>

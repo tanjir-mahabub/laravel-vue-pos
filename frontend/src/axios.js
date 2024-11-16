@@ -1,10 +1,11 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-    baseURL: import.meta.VITE_API_URL, // Backend URL
+    baseURL: import.meta.env.VITE_API_URL,
     headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`, // Replace with how you get the token
         'Content-Type': 'application/json',
-    },
+    }
 });
 
 // Intercept requests to add the Authorization header

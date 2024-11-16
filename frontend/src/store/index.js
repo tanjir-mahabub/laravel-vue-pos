@@ -1,82 +1,164 @@
-import axios from '@/axios';  // Import axios instance
 import { createStore } from 'vuex';
+import axios from 'axios';
 
 export default createStore({
     state: {
+        token: localStorage.getItem('authToken') || '', // Initial token from localStorage
         user: null,
-        token: localStorage.getItem('auth_token') || null,  // Load token from localStorage
-        cart: JSON.parse(localStorage.getItem('cart')) || [],  // Load cart from localStorage
+        isAuthenticated: false,
+        products: [],
+        cart: [],
+        reports: {
+            dateWise: [],
+            productWise: [],
+            stock: [],
+        },
+    },
+    getters: {
+        isAuthenticated: (state) => !!state.token, // Check if token exists
+        products: (state) => state.products,
+        cart: (state) => state.cart,
+        reports: (state) => state.reports,
+        userRole: (state) => (state.user ? state.user.role : null),
     },
     mutations: {
-        setUser(state, user) {
-            state.user = user;
-        },
-        setToken(state, token) {
+        SET_TOKEN(state, token) {
             state.token = token;
-            localStorage.setItem('auth_token', token);  // Store token in localStorage
+            localStorage.setItem('authToken', token); // Store token in localStorage
         },
-        logout(state) {
+        CLEAR_TOKEN(state) {
+            state.token = '';
+            localStorage.removeItem('authToken'); // Remove token from localStorage
+        },
+        SET_USER(state, user) {
+            state.user = user;
+            state.isAuthenticated = true;
+        },
+        SET_PRODUCTS(state, products) {
+            state.products = products;
+        },
+        SET_CART(state, cart) {
+            state.cart = cart;
+        },
+        SET_REPORTS(state, { type, data }) {
+            state.reports[type] = data;
+        },
+        LOGOUT(state) {
             state.user = null;
-            state.token = null;
-            localStorage.removeItem('auth_token');  // Remove token from localStorage
-        },
-        addToCart(state, product) {
-            const existingProduct = state.cart.find(item => item.id === product.id);
-            if (existingProduct) {
-                existingProduct.quantity += 1;  // Increase quantity if already in cart
-            } else {
-                state.cart.push({ ...product, quantity: 1 });
-            }
-            localStorage.setItem('cart', JSON.stringify(state.cart));  // Persist cart to localStorage
-        },
-        removeFromCart(state, productId) {
-            state.cart = state.cart.filter(item => item.id !== productId);
-            localStorage.setItem('cart', JSON.stringify(state.cart));  // Persist cart to localStorage
-        },
-        clearCart(state) {
+            state.isAuthenticated = false;
             state.cart = [];
-            localStorage.setItem('cart', JSON.stringify(state.cart));  // Persist cart to localStorage
-        }
+            state.reports = {
+                dateWise: [],
+                productWise: [],
+                stock: [],
+            };
+        },
     },
     actions: {
         async login({ commit }, credentials) {
             try {
-                const response = await axios.post('/login', credentials);
-                commit('setToken', response.data.token);
-                commit('setUser', response.data.user);
-                // Optionally, fetch user data if not included in the response
-                // const userResponse = await axios.get('/user');
-                // commit('setUser', userResponse.data);
+                const { data } = await axios.post('/api/login', credentials);  // Replace with correct API endpoint
+                commit('SET_TOKEN', data.token);  // Store token in Vuex state
+                commit('SET_USER', data.user);   // Store user data in Vuex state
             } catch (error) {
                 console.error('Login failed', error);
-                // Add error handling, maybe show a message to the user
             }
         },
-        logout({ commit }) {
-            commit('logout');
+        async logout({ commit }) {
+            try {
+                await axios.post('/api/logout');  // Replace with correct API endpoint
+                commit('CLEAR_TOKEN');  // Clear token from Vuex state
+                commit('SET_USER', null);  // Clear user data from Vuex state
+                commit('LOGOUT'); // Reset other state variables like cart and reports
+            } catch (error) {
+                console.error('Logout failed', error);
+            }
         },
-        addToCart({ commit }, product) {
-            commit('addToCart', product);
+        async fetchProducts({ commit }) {
+            try {
+                const { data } = await axios.get('/api/products');  // Replace with correct API endpoint
+                commit('SET_PRODUCTS', data);
+            } catch (error) {
+                console.error('Failed to fetch products', error);
+            }
         },
-        removeFromCart({ commit }, productId) {
-            commit('removeFromCart', productId);
+        async fetchCart({ commit }) {
+            try {
+                const { data } = await axios.get('/api/cart');  // Replace with correct API endpoint
+                commit('SET_CART', data);
+            } catch (error) {
+                console.error('Failed to fetch cart', error);
+            }
         },
-        clearCart({ commit }) {
-            commit('clearCart');
-        }
+        async addToCart({ dispatch }, item) {
+            try {
+                await axios.post('/api/cart/add', item);  // Replace with correct API endpoint
+                await dispatch('fetchCart');
+            } catch (error) {
+                console.error('Failed to add item to cart', error);
+            }
+        },
+        async removeFromCart({ dispatch }, itemId) {
+            try {
+                await axios.delete(`/api/cart/item/${itemId}`);  // Replace with correct API endpoint
+                await dispatch('fetchCart');
+            } catch (error) {
+                console.error('Failed to remove item from cart', error);
+            }
+        },
+        async checkoutCart({ dispatch }) {
+            try {
+                await axios.post('/api/cart/checkout');  // Replace with correct API endpoint
+                await dispatch('fetchCart');
+            } catch (error) {
+                console.error('Failed to checkout cart', error);
+            }
+        },
+        async fetchDateWiseReport({ commit }, payload) {
+            try {
+                const { data } = await axios.post('/api/sales/date-wise', payload);  // Replace with correct API endpoint
+                commit('SET_REPORTS', { type: 'dateWise', data });
+            } catch (error) {
+                console.error('Failed to fetch date-wise sales report', error);
+            }
+        },
+        async fetchProductWiseReport({ commit }, payload) {
+            try {
+                const { data } = await axios.post('/api/sales/product-wise', payload);  // Replace with correct API endpoint
+                commit('SET_REPORTS', { type: 'productWise', data });
+            } catch (error) {
+                console.error('Failed to fetch product-wise sales report', error);
+            }
+        },
+        async fetchStockReport({ commit }) {
+            try {
+                const { data } = await axios.get('/api/sales/stock');  // Replace with correct API endpoint
+                commit('SET_REPORTS', { type: 'stock', data });
+            } catch (error) {
+                console.error('Failed to fetch stock report', error);
+            }
+        },
+        async checkAuthentication({ commit }) {
+            const token = localStorage.getItem('authToken');
+            if (token) {
+                axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+                try {
+                    const { data } = await axios.get('/api/user');  // Replace with correct API endpoint
+                    commit('SET_USER', data);
+                } catch (error) {
+                    console.error('Error fetching user data', error);
+                }
+            }
+        },
     },
-    getters: {
-        isAuthenticated(state) {
-            return !!state.token;  // Check if there's a token
-        },
-        user(state) {
-            return state.user;
-        },
-        cartItems(state) {
-            return state.cart;
-        },
-        cartTotal(state) {
-            return state.cart.reduce((total, item) => total + item.price * item.quantity, 0);
-        }
+    modules: {},
+});
+
+// Interceptor to add token to each request
+axios.interceptors.request.use((config) => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
     }
+    return config;
 });
