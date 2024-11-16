@@ -14,6 +14,8 @@
 </template>
 
 <script>
+import axiosInstance from '@/axios';
+
 export default {
   data() {
     return {
@@ -26,7 +28,7 @@ export default {
   methods: {
     async fetchProducts() {
         try {
-            const response = await axios.get('/products');
+            const response = await axiosInstance.get('/products');
             this.products = response.data;
         } catch (error) {
             console.error('Failed to fetch products', error);
