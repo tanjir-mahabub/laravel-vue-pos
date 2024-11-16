@@ -18,5 +18,8 @@ export default defineConfig({
     host: '0.0.0.0', // Make sure Vite listens on all interfaces
     port: 5173,       // Ensure Vite is running on port 5173
     strictPort: true, // Fail if the port is already in use
+    watch: {
+      usePolling: true, // Necessary for Docker on some systems
+    },
   },
 })

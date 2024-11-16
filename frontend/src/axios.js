@@ -1,11 +1,10 @@
-import axios from 'axios'
+import axios from 'axios';
 
-axios.defaults.baseURL = 'http://127.0.0.1:8000/api'  // Backend API URL
+const axiosInstance = axios.create({
+    baseURL: import.meta.VUE_APP_API_URL, // Backend URL
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
 
-// Add Authorization header for authenticated requests
-const token = localStorage.getItem('auth_token')
-if (token) {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-}
-
-export default axios
+export default axiosInstance;
