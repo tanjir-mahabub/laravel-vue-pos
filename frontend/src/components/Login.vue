@@ -13,20 +13,25 @@ export default {
   },
   methods: {
     async loginUser() {
-      try {
-        // Dispatch the login action and pass credentials
-        await this.$store.dispatch('login', { email: this.email, password: this.password });
-        
-        // After login, check if token is stored
-        const token = localStorage.getItem('authToken');
-        console.log('Stored token:', token);  // Make sure the token is being stored
+        try {
+            // Dispatch the login action and pass credentials
+            await this.$store.dispatch('login', { email: this.email, password: this.password });
 
-        // Redirect to dashboard or homepage
-        this.$router.push('/');
-      } catch (error) {
-        alert('Login failed: ' + error.message);
-      }
-    },
+            // After login, check if token is stored
+            const token = localStorage.getItem('authToken');
+            console.log('Stored token:', token);  // Make sure the token is being stored
+
+            if (token) {
+                // Redirect to dashboard or homepage
+                this.$router.push('/');  // Redirect after successful login
+            } else {
+                alert('Login failed, please try again!');
+            }
+        } catch (error) {
+            alert('Login failed: ' + error.message);
+        }
+    }
+
   },
 };
 </script>
