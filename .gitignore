@@ -17,3 +17,8 @@ Thumbs.db
 
 # Ignore any other files that should not be tracked
 *.log
+
+# Ignore MySQL socket and related files
+mysql_data/*.sock
+mysql_data/*.pid
+mysql_data/*.log

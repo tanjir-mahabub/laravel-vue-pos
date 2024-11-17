@@ -1,14 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import store from '../store';
 
-// import Home from '@/views/Home.vue';
 import Login from '@/components/Login.vue';
 import Register from '@/components/Register.vue';
 import Dashboard from '@/components/Dashboard.vue';
 import ProductList from '@/components/ProductList.vue';
 import SalesReport from '@/components/SalesReport.vue';
 import StockReport from '@/components/StockReport.vue';
-import App from '@/App.vue';
 import ReportFilters from '@/components/ReportFilters.vue';
 
 const routes = [
@@ -52,7 +50,6 @@ const router = createRouter({
   routes
 });
 
-// Global route guard to protect routes
 router.beforeEach((to, from, next) => {
   const isAuthenticated = store.getters.isAuthenticated;
   const userRole = store.getters.userRole;

@@ -31,7 +31,7 @@ cd your-repository-name
 Run the following command from the **root of the project directory** to build and start all Docker containers:
 
 ```
-docker-compose up --build
+docker-compose up --build -d
 ```
 This will:
 
@@ -134,7 +134,7 @@ DB_PASSWORD=custom_password
 Open frontend/.env and set the API endpoint:
 
 ```
-VITE_API_BASE_URL=http://127.0.0.1:8000/api
+VITE_API_URL=http://127.0.0.1:8000/api
 ```
 ### 6. Access the Application
 Once the setup is complete, you can access the application in your browser:

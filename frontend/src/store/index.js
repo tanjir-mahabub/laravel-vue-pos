@@ -76,10 +76,11 @@ export default createStore({
         },
         async fetchProducts({ commit }) {
             try {
-                const { data } = await axios.get('/products');  
+                const { data } = await axios.get('/products');
                 commit('SET_PRODUCTS', data);
             } catch (error) {
                 console.error('Failed to fetch products', error);
+                throw new Error('Failed to fetch products');  // This can be used in the UI for feedback
             }
         },
         async fetchCart({ commit }) {

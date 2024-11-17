@@ -1,16 +1,27 @@
 <template>
-  <div>
+  <v-container>
     <h1>Product List</h1>
-    <div v-if="loading">Loading products...</div>
-    <div v-else-if="products.length === 0">No products available.</div>
-    <div v-else>
-      <ul>
-        <li v-for="product in products" :key="product.id">
-          {{ product.name || 'Unnamed Product' }} - ${{ product.price || 'N/A' }}
-        </li>
-      </ul>
-    </div>
-  </div>
+
+    <!-- Loading State -->
+    <v-alert v-if="loading" type="info" :border="loading ? 'left' : ''">
+      Loading products...
+    </v-alert>
+
+    <!-- No Products Available State -->
+    <v-alert v-else-if="products.length === 0" type="warning" border="left">
+      No products available.
+    </v-alert>
+
+    <!-- Product List -->
+    <v-row v-else>
+      <v-col v-for="product in products" :key="product.id" cols="12" sm="6" md="4">
+        <v-card>
+          <v-card-title>{{ product.name || 'Unnamed Product' }}</v-card-title>
+          <v-card-subtitle>\${{ product.price || 'N/A' }}</v-card-subtitle>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -35,7 +46,7 @@ export default {
       }
 
       try {
-        const response = await axios.get('/api/products', {
+        const response = await axios.get('/products', {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',

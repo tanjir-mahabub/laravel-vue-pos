@@ -1,9 +1,37 @@
 <template>
-  <form @submit.prevent="loginUser">
-    <input v-model="email" placeholder="Email" />
-    <input v-model="password" type="password" placeholder="Password" />
-    <button type="submit">Login</button>
-  </form>
+  <v-container class="login-form">
+    <v-row justify="center">
+      <v-col cols="12" sm="8" md="4">
+        <v-card>
+          <v-card-title class="headline">Login</v-card-title>
+          <v-card-text>
+            <v-form @submit.prevent="loginUser">
+              <!-- Email input -->
+              <v-text-field
+                v-model="email"
+                label="Email"
+                type="email"
+                required
+                outlined
+              />
+              
+              <!-- Password input -->
+              <v-text-field
+                v-model="password"
+                label="Password"
+                type="password"
+                required
+                outlined
+              />
+              
+              <!-- Submit button -->
+              <v-btn type="submit" color="primary" block>Login</v-btn>
+            </v-form>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -31,7 +59,13 @@ export default {
             alert('Login failed: ' + error.message);
         }
     }
-
   },
 };
 </script>
+
+<style scoped>
+/* Center the login form */
+.login-form {
+  padding: 20px;
+}
+</style>

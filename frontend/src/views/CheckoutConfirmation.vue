@@ -1,9 +1,26 @@
 <template>
-  <div class="confirmation">
-    <h2>Thank you for your order!</h2>
-    <p>Your order has been successfully placed.</p>
-    <router-link to="/products">Go back to products</router-link>
-  </div>
+  <v-container class="confirmation" text-center>
+    <v-row>
+      <v-col cols="12">
+        <v-typography variant="h2">Thank you for your order!</v-typography>
+      </v-col>
+      <v-col cols="12">
+        <v-typography variant="body1">
+          Your order has been successfully placed.
+        </v-typography>
+      </v-col>
+      <v-col cols="12">
+        <v-btn
+          color="primary"
+          to="/products"
+          class="mt-4"
+          large
+        >
+          Go back to products
+        </v-btn>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -14,7 +31,6 @@ export default {
 
 <style scoped>
 .confirmation {
-  text-align: center;
   margin-top: 50px;
 }
 </style>

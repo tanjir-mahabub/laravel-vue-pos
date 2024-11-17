@@ -1,23 +1,23 @@
-# Use Node.js 16
-FROM node:16-alpine
+# Use an official Node.js image as the base image
+FROM node:18-slim
 
-# Set working directory
+# Set the working directory in the container
 WORKDIR /usr/src/app
 
-# Copy package files
+# Copy package.json and package-lock.json (if available)
 COPY package*.json ./
 
 # Install dependencies
 RUN npm install
 
-# Copy application files
+# Copy the rest of the application code
 COPY . .
 
-# Build for production
+# Build the application
 RUN npm run build
 
-# Expose application port
+# Expose the port on which the app will run
 EXPOSE 5173
 
-# Start application
+# Command to run the app
 CMD ["npm", "run", "serve"]
